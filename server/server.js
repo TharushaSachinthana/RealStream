@@ -1,28 +1,28 @@
-const https = require('https');
-const fs = require('fs');
+const http = require('http'); // Changed from 'https' to 'http'
 const express = require('express');
 const path = require('path');
+const socketIo = require('socket.io');
 
 const app = express();
 
-// Define HTTPS options with SSL/TLS certificates
-const options = {
-    key: fs.readFileSync('./key.pem'), // Replace with the actual path to your key file
-    cert: fs.readFileSync('./cert.pem') // Replace with the actual path to your certificate file
-};
+// Create HTTP server instead of HTTPS
+const server = http.createServer(app);
 
-// Create HTTPS server
-const server = https.createServer(options, app);
-
-const io = require('socket.io')(server, {
+// Initialize Socket.IO with CORS settings
+const io = socketIo(server, {
     cors: {
-        origin: "*",
+        origin: "*", // Allow all origins (Adjust if needed for security)
         methods: ["GET", "POST"]
     }
 });
 
-// Serve static files from the client directory
-app.use(express.static(path.join(__dirname, '../client')));
+// Serve static files from the 'client' directory
+app.use(express.static(path.join(__dirname, 'client')));
+
+// Handle all other routes by serving 'index.html'
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'index.html'));
+});
 
 const rooms = new Map();
 
@@ -81,5 +81,5 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server running securely on https://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
