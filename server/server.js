@@ -1,15 +1,19 @@
 const https = require('https');
 const fs = require('fs');
 const express = require('express');
-const app = express();
 const path = require('path');
 
+const app = express();
+
+// Define HTTPS options with SSL/TLS certificates
 const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
+    key: fs.readFileSync('./key.pem'), // Replace with the actual path to your key file
+    cert: fs.readFileSync('./cert.pem') // Replace with the actual path to your certificate file
 };
 
+// Create HTTPS server
 const server = https.createServer(options, app);
+
 const io = require('socket.io')(server, {
     cors: {
         origin: "*",
@@ -17,6 +21,7 @@ const io = require('socket.io')(server, {
     }
 });
 
+// Serve static files from the client directory
 app.use(express.static(path.join(__dirname, '../client')));
 
 const rooms = new Map();
@@ -76,5 +81,5 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running securely on https://localhost:${PORT}`);
 });
