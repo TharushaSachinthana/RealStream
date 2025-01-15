@@ -3,15 +3,8 @@ let peers = {};
 let socket = null;
 
 function initWebRTC() {
-    // Establish a Socket.IO connection to the same host that served the page
-    socket = io({
-        secure: true,
-        transports: ['websocket'], // Ensures WebSocket is used
-        upgrade: false
-    });
-
-    socket.on('connect', () => {
-        console.log('Connected to server via Socket.IO');
+    socket = io('https://' + window.location.hostname + ':3000', {
+        rejectUnauthorized: false
     });
 
     socket.on('user-joined', async ({ id, username }) => {
@@ -25,7 +18,6 @@ function initWebRTC() {
     });
 
     socket.on('user-left', (userId) => {
-        console.log('User left:', userId);
         if (peers[userId]) {
             peers[userId].peer.destroy();
             delete peers[userId];
@@ -44,17 +36,12 @@ function initWebRTC() {
         });
     });
 
-    // Message handler
+    // Add message handler here
     socket.on('message', ({ content, from, id }) => {
         const messages = document.getElementById('chatMessages');
         const messageElement = formatMessage(from, content, id === socket.id);
         messages.appendChild(messageElement);
         messages.scrollTop = messages.scrollHeight;
-    });
-
-    // Handle connection errors
-    socket.on('connect_error', (error) => {
-        console.error('Connection Error:', error);
     });
 }
 
@@ -115,7 +102,7 @@ async function getLocalStream() {
             },
             audio: true
         });
-
+        
         const localVideo = document.getElementById('localVideo');
         localVideo.srcObject = localStream;
         localVideo.volume = 0;
@@ -136,6 +123,7 @@ function cleanupPeer() {
     peers = {};
 }
 
+// Add this new function
 function cleanupAll() {
     cleanupPeer();
     if (localStream) {
@@ -179,6 +167,7 @@ function createVideoElement(userId, username) {
     return video;
 }
 
+// Add formatMessage function to webrtc.js
 function formatMessage(from, content, isOwn) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isOwn ? 'own' : ''}`;
