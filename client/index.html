@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MeetMake - Real-Time Remote Conferencing Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Screen -->
+        <div class="login-container" id="login">
+            <div class="login-box">
+                <h1>MeetMake</h1>
+                <p>Connect with others</p>
+                <div class="login-form">
+                    <input type="text" id="username" placeholder="Enter your name">
+                    <input type="text" id="roomName" placeholder="Enter room name">
+                    <button onclick="register()" class="join-btn">
+                        <i class="fa-regular fa-right-to-bracket"></i> Join Session
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Application Screen -->
+        <div class="main-container hidden" id="main">
+            <!-- Header with controls -->
+            <div class="header">
+                <div class="room-info">
+                    <h2>Room: <span id="currentRoom">Main Lobby</span></h2>
+                </div>
+                <div class="controls">
+                    <button id="audioToggle" onclick="toggleAudio()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button id="videoToggle" onclick="toggleVideo()">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button id="leaveCall" onclick="leaveSession()" class="leave-btn">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Video Grid -->
+                <div class="video-grid" id="videoGrid">
+                    <div class="video-wrapper local-video">
+                        <video id="localVideo" autoplay playsinline muted></video>
+                        <div class="video-overlay">
+                            <span class="participant-name">You</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Panel -->
+                <div class="chat-panel" id="chatPanel">
+                    <div class="chat-header">
+                        <h3>Chat</h3>
+                        <button onclick="toggleChat()" class="toggle-chat">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input">
+                        <input type="text" id="messageInput" placeholder="Type a message...">
+                        <button onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="connection-status" id="connectionStatus">
+        <i class="fas fa-signal"></i>
+        <span id="serverAddress"></span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.0/simplepeer.min.js"></script>
+    <script src="webrtc.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
