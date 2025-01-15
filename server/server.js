@@ -1,28 +1,23 @@
-const http = require('http'); // Changed from 'https' to 'http'
+const https = require('https');
+const fs = require('fs');
 const express = require('express');
 const path = require('path');
-const socketIo = require('socket.io');
-
 const app = express();
 
-// Create HTTP server instead of HTTPS
-const server = http.createServer(app);
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
 
-// Initialize Socket.IO with CORS settings
-const io = socketIo(server, {
+const server = https.createServer(options, app);
+const io = require('socket.io')(server, {
     cors: {
-        origin: "*", // Allow all origins (Adjust if needed for security)
+        origin: "*",
         methods: ["GET", "POST"]
     }
 });
 
-// Serve static files from the 'client' directory
-app.use(express.static(path.join(__dirname, 'client')));
-
-// Handle all other routes by serving 'index.html'
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'index.html'));
-});
+app.use(express.static(path.join(__dirname, '../client')));
 
 const rooms = new Map();
 
