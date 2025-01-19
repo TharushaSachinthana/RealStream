@@ -1,77 +1,107 @@
-# MeetMake - Video Conferencing Platform
+# RealStream
 
-A WebRTC-based platform for real-time video/audio communication, designed for seamless online meetings and collaborations.
+RealStream is a secure and efficient WebRTC-based video conferencing platform that supports real-time video/audio communication, text chat, and dynamic room management. With a focus on simplicity and accessibility, it provides seamless connectivity for users across various domains.
+
+---
 
 ## Features
 
-- Real-time video and audio streaming
-- Multiple participant support
-- Chat functionality
-- Room-based sessions
-- Audio/Video controls
-- Responsive design
-- Low-latency peer-to-peer connections
+- **Real-time Video and Audio Communication**: High-quality, low-latency video and audio streams.
+- **Text Chat Integration**: Chat alongside video calls for additional communication.
+- **Dynamic Room Creation and Management**: Create and join custom rooms effortlessly.
+- **Responsive and Intuitive UI**: Designed for ease of use across devices.
+- **Secure Communication**: Uses HTTPS and STUN servers for secure connections.
 
-## Prerequisites
-
-- Node.js (v16 or higher)
-- SSL certificates (for HTTPS)
-
-## Setup
-
-1. Clone the repository:
-```bash
-git clone https://github.com/hasithapramuditha/MeetMake.git
-cd MeetMake
-```
-
-2. Install dependencies for both server and client:
-```bash
-npm install
-```
-
-3. Generate SSL certificates (required for WebRTC):
-```bash
-openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
-```
-
-4. Start the development servers:
-```bash
-node server/server.js
-```
-
-5. Access the application:
-   - Open your browser and navigate to `http://localhost:3000`
-
-## Technology Stack
-
-- Frontend:
-  - React.js
-  - Redux Toolkit
-  - Material-UI
-  - Socket.IO Client
-- Backend:
-  - Node.js
-  - Express
-  - Socket.IO
+---
 
 ## Architecture
 
-- Server handles signaling and room management
-- WebRTC for peer-to-peer media streaming
-- Socket.IO for real-time communication
-- STUN/TURN servers for NAT traversal
+The platform employs a client-server model:
 
-## Security Notes
+- **Frontend (Client)**: Handles user interface and WebRTC functionalities.
+- **Backend (Server)**: Manages signaling, user sessions, and static file serving.
 
-- Uses HTTPS for secure communication
-- Peer-to-peer encryption for media streams
-- Room-based access control
+### Data Flow
 
-## Contributing
+1. Users register and join rooms.
+2. Backend establishes WebSocket connections.
+3. WebRTC manages peer-to-peer media streams.
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+---
+
+## Key Technologies Used
+
+- **WebRTC**: Peer-to-peer video/audio communication.
+- **Socket.IO**: Real-time signaling and data exchange.
+- **Express.js**: Lightweight backend framework.
+- **Node.js**: JavaScript runtime environment.
+- **HTML/CSS/JavaScript**: For frontend development.
+- **STUN/TURN Servers**: Ensuring reliable communication.
+
+---
+
+## Installation and Setup
+
+### Prerequisites
+
+- Node.js installed on your system.
+
+### Steps
+
+1. Clone the repository:
+   ```bash
+   git clone <https://github.com/TharushaSachinthana/RealStream.git>
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd RealStream
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Generate SSL certificates for secure communication.
+5. Start the server:
+   ```bash
+   npm start
+   ```
+6. Open the application in your browser.
+
+---
+
+## Testing
+
+- Tested on major browsers: Chrome, Firefox.
+- Stress-tested for concurrent user connections.
+
+---
+
+## Challenges and Solutions
+
+- **NAT Traversal**: Integrated STUN servers to resolve NAT traversal issues.
+- **Concurrent Users**: Optimized WebSocket communication for efficiency.
+
+---
+
+## Future Enhancements
+
+- Add recording functionality for video calls.
+- Implement TURN servers for improved reliability.
+- Enhance UI with advanced CSS frameworks.
+- Develop a mobile application for iOS and Android.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+---
+
+## Author
+
+**Tharusha Sachinthana Thilakarathna**
+
+---
+
+Feel free to contribute, report issues, or suggest new features. Happy coding!
