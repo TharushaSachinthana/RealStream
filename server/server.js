@@ -1,20 +1,15 @@
-const https = require('https');
-const fs = require('fs');
+const http = require('http');
 const express = require('express');
 const app = express();
 const path = require('path');
 
-const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-};
-
-const server = https.createServer(options, app);
+const server = http.createServer(app);
 const io = require('socket.io')(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"]
-    }
+    },
+    maxHttpBufferSize: 10e6 // 10MB max file size
 });
 
 app.use(express.static(path.join(__dirname, '../client')));
@@ -42,6 +37,7 @@ io.on('connection', (socket) => {
         const users = Array.from(rooms.get(room)).filter(id => id !== socket.id);
         socket.emit('room-users', users);
 
+        // Broadcast updated participant count
         io.to(room).emit('participant-count', rooms.get(room).size);
     });
 
@@ -57,7 +53,18 @@ io.on('connection', (socket) => {
         io.to(socket.room).emit('message', {
             content: message,
             from: socket.username,
-            id: socket.id
+            id: socket.id,
+            timestamp: new Date().toISOString()
+        });
+    });
+
+    socket.on('file', (fileData) => {
+        // Broadcast file to all users in the room
+        io.to(socket.room).emit('file', {
+            ...fileData,
+            from: socket.username,
+            id: socket.id,
+            timestamp: new Date().toISOString()
         });
     });
 
@@ -74,7 +81,16 @@ io.on('connection', (socket) => {
     });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+const PORT = process.env.PORT || 8080;
+const HOST = '0.0.0.0';
+
+server.listen(PORT, HOST, (err) => {
+    if (err) {
+        console.error('Error starting server:', err);
+        return;
+    }
+    console.log(`Server running at http://${HOST}:${PORT}`);
+    console.log('You can access it using:');
+    console.log(`  - http://localhost:${PORT}`);
+    console.log(`  - http://127.0.0.1:${PORT}`);
 });

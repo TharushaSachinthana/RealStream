@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Test</title>
+</head>
+<body>
+    <h1>Server is working!</h1>
+    <p>If you can see this message, the server is properly serving static files.</p>
+    <script>
+        // Test socket.io connection
+        const socket = io();
+        socket.on('connect', () => {
+            document.body.innerHTML += '<p style="color: green;">Socket.IO Connected Successfully!</p>';
+        });
+        socket.on('connect_error', (error) => {
+            document.body.innerHTML += '<p style="color: red;">Socket.IO Connection Error: ' + error.message + '</p>';
+        });
+    </script>
+    <script src="/socket.io/socket.io.js"></script>
+</body>
+</html> 

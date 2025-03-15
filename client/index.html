@@ -1,88 +1,121 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RealStream - Real-Time Remote meeting Platform</title>
+    <title>RealStream - Video Meeting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Login Screen -->
-        <div class="login-container" id="login">
-            <div class="login-box">
-                <h1>RealStream</h1>
-                <p>Connect with others</p>
-                <div class="login-form">
-                    <input type="text" id="username" placeholder="Enter your name">
-                    <input type="text" id="roomName" placeholder="Enter room name">
-                    <button onclick="register()" class="join-btn">
-                        <i class="fa-regular fa-right-to-bracket"></i> Join Session
-                    </button>
-                </div>
-            </div>
+    <div id="login" class="container">
+        <h1>RealStream</h1>
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Enter your name" autocomplete="off">
+            <input type="text" id="roomName" placeholder="Room ID (optional)" autocomplete="off">
+            <button onclick="register()">Join Meeting</button>
         </div>
+    </div>
 
-        <!-- Main Application Screen -->
-        <div class="main-container hidden" id="main">
-            <!-- Header with controls -->
-            <div class="header">
-                <div class="room-info">
-                    <h2>Room: <span id="currentRoom">Main Lobby</span></h2>
+    <div id="main" class="hidden">
+        <header>
+            <div class="header-left">
+                <h2>RealStream</h2>
+                <div id="currentRoom"></div>
+            </div>
+            <div class="meeting-link-container">
+                <input type="text" id="meetingLink" readonly>
+                <button class="copy-link-btn" onclick="copyMeetingLink()">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+            <div class="header-right">
+                <div id="participantCount">
+                    <i class="fas fa-users"></i>
+                    <span>0</span>
                 </div>
-                <div class="controls">
-                    <button id="audioToggle" onclick="toggleAudio()">
-                        <i class="fas fa-microphone"></i>
-                    </button>
-                    <button id="videoToggle" onclick="toggleVideo()">
-                        <i class="fas fa-video"></i>
-                    </button>
-                    <button id="leaveCall" onclick="leaveSession()" class="leave-btn">
-                        <i class="fas fa-phone-slash"></i>
-                    </button>
+                <button onclick="toggleSidePanel()" class="toggle-chat">
+                    <i class="fas fa-comments"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="video-grid" id="videoGrid">
+                <div class="video-container local">
+                    <video id="localVideo" autoplay muted playsinline></video>
+                    <div class="video-overlay">
+                        <span class="username">You</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Main Content Area -->
-            <div class="content-area">
-                <!-- Video Grid -->
-                <div class="video-grid" id="videoGrid">
-                    <div class="video-wrapper local-video">
-                        <video id="localVideo" autoplay playsinline muted></video>
-                        <div class="video-overlay">
-                            <span class="participant-name">You</span>
-                        </div>
+            <div id="sidePanel" class="side-panel">
+                <div class="panel-header">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" onclick="switchPanel('chat')">Chat</button>
+                        <button class="tab-btn" onclick="switchPanel('files')">Files</button>
                     </div>
+                    <button class="close-btn" onclick="toggleSidePanel()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
 
-                <!-- Chat Panel -->
-                <div class="chat-panel" id="chatPanel">
-                    <div class="chat-header">
-                        <h3>Chat</h3>
-                        <button onclick="toggleChat()" class="toggle-chat">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                    <div class="chat-messages" id="chatMessages"></div>
-                    <div class="chat-input">
-                        <input type="text" id="messageInput" placeholder="Type a message...">
+                <div id="chatPanel">
+                    <div id="chatMessages" class="messages"></div>
+                    <div class="message-input">
+                        <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
                         <button onclick="sendMessage()">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
                 </div>
+
+                <div id="filesPanel" class="hidden">
+                    <div id="sharedFiles"></div>
+                    <div class="file-upload">
+                        <button onclick="openFileShare()">
+                            <i class="fas fa-file-upload"></i> Share File
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="audioToggle" onclick="toggleAudio()" title="Mute/Unmute">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button id="videoToggle" onclick="toggleVideo()" title="Start/Stop Video">
+                <i class="fas fa-video"></i>
+            </button>
+            <button id="screenShareToggle" onclick="toggleScreenShare()" title="Share Screen">
+                <i class="fas fa-desktop"></i>
+            </button>
+            <button id="recordToggle" onclick="toggleRecording()" title="Record Meeting">
+                <i class="fas fa-record-vinyl"></i>
+            </button>
+            <div id="recordingIndicator" class="hidden">
+                <span id="recordingTime">00:00</span>
+            </div>
+            <button class="leave-btn" onclick="leaveSession()" title="Leave Meeting">
+                <i class="fas fa-phone-slash"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="fileShareModal" class="modal">
+        <div class="modal-content">
+            <h3>Share File</h3>
+            <input type="file" id="modalFileInput" multiple>
+            <div class="modal-footer">
+                <button onclick="document.getElementById('fileShareModal').style.display='none'">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Connection Status -->
-    <div class="connection-status" id="connectionStatus">
-        <i class="fas fa-signal"></i>
-        <span id="serverAddress"></span>
-    </div>
+    <div id="toastContainer" class="toast-container"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.0/simplepeer.min.js"></script>
-    <script src="webrtc.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
